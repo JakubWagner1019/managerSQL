@@ -3,19 +3,15 @@
 from tkinter import *
 from tkinter import filedialog
 import qRegister as qr
-import SQLmanager as sql
-
+import SQLconnection as sql
 
 def sendQuery():
  query=entry.get()
- result=sqlManager.execute(query)
+ result=sqlConnection.execute(query)
  qreg.addQuery(query)
  output.delete('1.0',END)
  output.insert(END,result)
  entry.delete(0,END)
- 
-def sendQuery2(event):
- sendQuery()
  
 def getOlder(event):
  entry.delete(0,END)
@@ -27,11 +23,11 @@ def getNewer(event):
 
 def establishConnection():
  file = filedialog.askopenfilename(filetypes=(("Databases","*.db"),("All files","*.*")))
+ sqlConnection.reconnect(file)
  output.delete('1.0',END)
- sqlManager.reconnect(file)
  output.insert(END,"Established a new connection"+file)
- 
-sqlManager=sql.SQLmanager('data.db')
+
+sqlConnection=sql.SQLconnection('data.db')
 qreg=qr.QueryRegister()
 
 root=Tk()
@@ -47,7 +43,7 @@ label=Label(frame1,text='query')
 entry=Entry(frame1,width=100)
 output=Text(root)
 button=Button(frame1,text='submit',command=sendQuery)
-root.bind("<Return>",sendQuery2)
+root.bind("<Return>",lambda event: sendQuery())
 root.bind("<Escape>",quit)
 root.bind("<Up>",getOlder)
 root.bind("<Down>",getNewer)
